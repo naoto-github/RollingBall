@@ -4,9 +4,9 @@ import ddf.minim.effects.*;
 import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
-
 import fisica.*;
 import java.util.ArrayList;
+import processing.serial.*;
 
 FWorld world;
 FCircle ball;
@@ -23,6 +23,10 @@ int MAX_STAGE = 3;
 int stage = 0;
 int life = 5;
 
+Serial port;
+float degX;
+float degY;
+
 void setup(){
   size(800, 600);
   smooth();
@@ -31,9 +35,20 @@ void setup(){
   initSound();
   initStage();
   initBall();
+  
+  port = new Serial(this, "COM5", 9600);
+  port.bufferUntil('\n');
 }
 
 void draw(){
+  
+  serialEvent(port);
+  
+  for(Slope slope: slopes){
+   float angle = radians(int(degX)+1);
+   slope.setRotation(angle);
+  }
+  
   background(color(0, 0, 0));
   world.draw();
   world.step();
@@ -184,6 +199,23 @@ void mouseDragged(){
     }  
   }
 
+}
+
+void serialEvent(Serial port){
+  String data = port.readStringUntil('\n');
+
+  if (data != null) {
+    data = trim(data);
+  
+    float sensors[] = float(split(data, ","));
+    
+    if(sensors.length == 2){
+      degX = sensors[0];
+      degY = sensors[1];
+      println(degX + ":" + degY);
+    }
+   
+  }
 }
 
 class Ball extends FCircle{

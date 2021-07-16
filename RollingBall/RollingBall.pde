@@ -1,3 +1,4 @@
+import controlP5.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
@@ -18,60 +19,92 @@ FWorld world;
 FCircle ball;
 FCircle goal;
 ArrayList<Slope> slopes;
+ArrayList<Jump> jumps;
 
 // スロープの角度
 float UNIT_ANGLE = PI / 180;
 
 // 効果音
+Minim minim;
 AudioPlayer fall_sound;
 AudioPlayer clear_sound;
 AudioPlayer fail_sound;
+AudioPlayer bgm_sound;
 
-// 尻圧通信
+// ボタン
+ControlP5 start_bt;
+PFont font;
+
+// シリアル通信
 Serial port;
 float degX;
 float degY;
 
 // 最大ステージ数
-int MAX_STAGE = 3;
+int MAX_STAGE = 4;
 
 // 現在のステージ
 int stage = 0;
 
 // ライフ
-int life = 5;
+int MAX_LIFE = 5;
+int life = MAX_LIFE;
 
 // 重力
-int gravity = 1000;
+int MIN_GRAVITY = 500;
+int gravity = MIN_GRAVITY;
 
 void setup(){
-  size(800, 600);
+  size(1200, 800);
   smooth();
   
-  initWorld();
+  initFont();
+  initButton();
   initSound();
+  initWorld();
   initStage();
-  initBall();
   
   // シリアルポート
-  port = new Serial(this, "COM5", 9600);
-  port.bufferUntil('\n'); // 改行までをバッファ
+  if(CONTROLLER == SENSOR){
+    port = new Serial(this, "COM5", 9600);
+    port.bufferUntil('\n'); // 改行までをバッファ
+  }
 }
 
 void draw(){
+  
+  if(stage == 0){
 
-  sensorRotate();
+    background(color(0, 0, 0));
+    fill(255);
+    textSize(128);
+    text("Rolling Ball", width / 2 - 410, height/2 - 100);
+    textSize(32);
+    text("Developed by mLab", width / 2 - 180, height/2 - 30);
+  }
+  else{
+        
+    sensorRotate();
+    
+    background(color(0, 0, 0));
+    world.draw();
+    world.step();
+    
+    textSize(30);
+    text("Stage: " + stage, width-250, 50);
+    text("Life: " + life, width-250, 90);
+    text("Gravity: " + gravity, width-250, 130);
   
-  background(color(0, 0, 0));
-  world.draw();
-  world.step();
-  
-  textSize(20);
-  text("Stage: " + (stage+1), width-120, 50);
-  text("Life: " + life, width-120, 80);
-  
-  if(isFail()){
-    initBall();
+    if(isFail()){
+      if(life == 0){
+        stage = 0;
+        life = MAX_LIFE;
+        initStage();
+      }
+      else{
+        initBall();
+      }
+    }
   }
 }
 
@@ -90,6 +123,22 @@ void initBall(){
   fall_sound.play();
 }
 
+void initGoal(){
+  world.add(goal);
+}
+
+void initJump(){
+  for(Jump jump: jumps){
+    world.add(jump);
+  }
+}
+
+void initSlope(){
+  for(Slope slope: slopes){
+    world.add(slope);
+  }
+}
+
 void contactStarted(FContact contact){
 
   // ボールとゴールの接触
@@ -99,91 +148,119 @@ void contactStarted(FContact contact){
     clear_sound.play();
     world.remove(ball);
     
-    stage = ((stage + 1) % MAX_STAGE);
-    
-    initStage();
-    initBall();
+    nextStage();
   }
   
 }
 
+
 void initSound(){
-  Minim minim = new Minim(this);
+  minim = new Minim(this);
   
   fall_sound = minim.loadFile("sound/fall.mp3");
   clear_sound = minim.loadFile("sound/clear.mp3");
   fail_sound = minim.loadFile("sound/fail.mp3");
+  bgm_sound = minim.loadFile("sound/bgm.mp3");
+  bgm_sound.setGain(-15);
+}
+
+void initButton(){
+    
+  start_bt = new ControlP5(this);
+  
+  start_bt.addButton("nextStage")
+    .setLabel("START")
+    .setPosition(width/2 - 150, height/2 + 100)
+    .setSize(300, 100)
+    .setFont(font);
+    
+  start_bt.setVisible(false);
+  
+}
+
+void initFont(){
+  font = createFont("Verdana Bold Italic", 64);
+  textFont(font);
 }
 
 void initStage(){
  
   slopes = new ArrayList<Slope>();
+  jumps = new ArrayList<Jump>();
   world.clear();
   
   if(stage == 0){
-   
-    Slope slope1 = new Slope(400, 10);
-    slope1.setPosition(250, 200);
-    slope1.rotate(UNIT_ANGLE);
-    slopes.add(slope1);
-   
-    Slope slope2 = new Slope(400, 10);
-    slope2.setPosition(550, 400);
-    slope2.rotate(UNIT_ANGLE);
-    slopes.add(slope2);
     
-    goal = new Goal(50, 250, 550);
+    bgm_sound.pause();
+    
+    gravity = MIN_GRAVITY;
+    world.setGravity(0, gravity);
+    start_bt.setVisible(true);
   }
-  else if(stage == 1){
+  else{
     
-    Slope slope1 = new Slope(200, 10);
-    slope1.setPosition(150, 100);
-    slope1.rotate(5*UNIT_ANGLE);
-    slopes.add(slope1);
+    bgm_sound.loop();
     
-    Slope slope2 = new Slope(100, 10);
-    slope2.setPosition(300, 200);
-    slope2.rotate(25*UNIT_ANGLE);
-    slopes.add(slope2);
+    gravity = gravity + 500;
+    world.setGravity(0, gravity);
     
-    Slope slope3 = new Slope(200, 10);
-    slope3.setPosition(450, 300);
-    slope3.rotate(45*UNIT_ANGLE);
-    slopes.add(slope3);
+    String filename = "stage" + stage + ".json";
+    loadStage(filename);
     
-    Slope slope4 = new Slope(100, 10);
-    slope4.setPosition(600, 400);
-    slope4.rotate(65*UNIT_ANGLE);
-    slopes.add(slope4);
-    
-    goal = new Goal(50, 700, 550);
-  }
-  else if(stage == 2){
-    
-    Slope slope1 = new Slope(350, 10);
-    slope1.setPosition(200, 100);
-    slope1.rotate(UNIT_ANGLE);
-    slopes.add(slope1);
-   
-    Slope slope2 = new Slope(350, 10);
-    slope2.setPosition(600, 250);
-    slope2.rotate(UNIT_ANGLE);
-    slopes.add(slope2);
-    
-    Slope slope3 = new Slope(350, 10);
-    slope3.setPosition(200, 400);
-    slope3.rotate(UNIT_ANGLE);
-    slopes.add(slope3);
-    
-    goal = new Goal(50, 375, 550);
-    
+    initBall();
+    initGoal();
+    initSlope();
+    initJump();
   }
   
-  for(Slope slope: slopes){
-    world.add(slope);
-  }
-  world.add(goal);
+}
+
+void loadStage(String filename){
+    JSONObject json = loadJSONObject("./json/" + filename);
+    
+    JSONArray json_slopes = json.getJSONArray("slopes");
+    
+    for(int i=0; i<json_slopes.size(); i++){
+      JSONObject json_slope = json_slopes.getJSONObject(i);
+      int x = json_slope.getInt("x");
+      int y = json_slope.getInt("y");
+      int w = json_slope.getInt("w");
+      int h = json_slope.getInt("h");
+      
+      Slope slope = new Slope(w, h);
+      slope.setPosition(x, y);
+      slope.rotate(UNIT_ANGLE);
+      slopes.add(slope);
+      
+    }
+    
+    JSONArray json_jumps = json.getJSONArray("jumps");
+    
+    if(json_jumps != null){
+      for(int i=0; i<json_jumps.size(); i++){
+        JSONObject json_jump = json_jumps.getJSONObject(i);
+        int x = json_jump.getInt("x");
+        int y = json_jump.getInt("y");
+        
+        Jump jump = new Jump(50, x, y);
+        jumps.add(jump);
+        
+      }   
+    }
+    
+    JSONObject json_goal = json.getJSONObject("goal");
+    int x = json_goal.getInt("x");
+    int y = json_goal.getInt("y");
+    goal = new Goal(50, x, y);
+    
+}
+
+void nextStage(){
+  start_bt.setVisible(false);
   
+  stage = ((stage + 1) % (MAX_STAGE+1));
+  
+  initStage();
 }
 
 // ボールが落下
@@ -194,6 +271,7 @@ boolean isFail(){
     fail_sound.play();
     life = max(life - 1, 0);
     delay(1000);
+        
     return true;
   }else{
     return false;
@@ -263,6 +341,19 @@ class Ball extends FCircle{
     this.setPosition(circle_x, circle_y);
     this.setFillColor(color(255, 255, 0));
     this.setStrokeColor(color(255, 255, 0));
+  }
+  
+}
+
+class Jump extends FCircle{
+  
+  Jump(float radius, float circle_x, float circle_y){
+    super(radius);
+    this.setPosition(circle_x, circle_y);
+    this.setFillColor(color(0, 255, 0));
+    this.setStrokeColor(color(0, 255, 0));
+    this.setStatic(true);
+    this.setRestitution(1);
   }
   
 }

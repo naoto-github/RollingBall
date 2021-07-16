@@ -8,24 +8,41 @@ import fisica.*;
 import java.util.ArrayList;
 import processing.serial.*;
 
+// 操作方法
+final int MOUSE = 0;
+final int SENSOR = 1;
+int CONTROLLER = MOUSE;
+
+// 物理演算
 FWorld world;
 FCircle ball;
 FCircle goal;
 ArrayList<Slope> slopes;
 
+// スロープの角度
 float UNIT_ANGLE = PI / 180;
 
+// 効果音
 AudioPlayer fall_sound;
 AudioPlayer clear_sound;
 AudioPlayer fail_sound;
 
-int MAX_STAGE = 3;
-int stage = 0;
-int life = 5;
-
+// 尻圧通信
 Serial port;
 float degX;
 float degY;
+
+// 最大ステージ数
+int MAX_STAGE = 3;
+
+// 現在のステージ
+int stage = 0;
+
+// ライフ
+int life = 5;
+
+// 重力
+int gravity = 1000;
 
 void setup(){
   size(800, 600);
@@ -36,18 +53,14 @@ void setup(){
   initStage();
   initBall();
   
+  // シリアルポート
   port = new Serial(this, "COM5", 9600);
-  port.bufferUntil('\n');
+  port.bufferUntil('\n'); // 改行までをバッファ
 }
 
 void draw(){
-  
-  serialEvent(port);
-  
-  for(Slope slope: slopes){
-   float angle = radians(int(degX)+1);
-   slope.setRotation(angle);
-  }
+
+  sensorRotate();
   
   background(color(0, 0, 0));
   world.draw();
@@ -65,7 +78,7 @@ void draw(){
 void initWorld(){
   Fisica.init(this);
   world = new FWorld();
-  world.setGravity(0, 1000);
+  world.setGravity(0, gravity);
   world.setEdges(0, -100, width, height+100, color(105,105,105));
 }
 
@@ -79,6 +92,7 @@ void initBall(){
 
 void contactStarted(FContact contact){
 
+  // ボールとゴールの接触
   if(contact.contains(ball, goal)){
     println("clear stage" + stage);
     clear_sound.rewind();
@@ -110,12 +124,12 @@ void initStage(){
    
     Slope slope1 = new Slope(400, 10);
     slope1.setPosition(250, 200);
-    slope1.rotate(5*UNIT_ANGLE);
+    slope1.rotate(UNIT_ANGLE);
     slopes.add(slope1);
    
     Slope slope2 = new Slope(400, 10);
     slope2.setPosition(550, 400);
-    slope2.rotate(5*UNIT_ANGLE);
+    slope2.rotate(UNIT_ANGLE);
     slopes.add(slope2);
     
     goal = new Goal(50, 250, 550);
@@ -148,17 +162,17 @@ void initStage(){
     
     Slope slope1 = new Slope(350, 10);
     slope1.setPosition(200, 100);
-    slope1.rotate(5*UNIT_ANGLE);
+    slope1.rotate(UNIT_ANGLE);
     slopes.add(slope1);
    
     Slope slope2 = new Slope(350, 10);
     slope2.setPosition(600, 250);
-    slope2.rotate(5*UNIT_ANGLE);
+    slope2.rotate(UNIT_ANGLE);
     slopes.add(slope2);
     
     Slope slope3 = new Slope(350, 10);
     slope3.setPosition(200, 400);
-    slope3.rotate(5*UNIT_ANGLE);
+    slope3.rotate(UNIT_ANGLE);
     slopes.add(slope3);
     
     goal = new Goal(50, 375, 550);
@@ -172,6 +186,7 @@ void initStage(){
   
 }
 
+// ボールが落下
 boolean isFail(){
   if(ball.getY() > (height + 2*ball.getSize())){
     println("Fail");
@@ -185,22 +200,42 @@ boolean isFail(){
   }
 }
 
+// マウス操作
 void mouseDragged(){
-  float diff_x = pmouseX - mouseX;
+  
+  if(CONTROLLER == MOUSE){
+    
+    float diff_x = pmouseX - mouseX;
 
-  if(diff_x > 0){
-    for(Slope slope: slopes){
-      slope.rotate(UNIT_ANGLE);
-    }    
-  }
-  else{
-    for(Slope slope: slopes){
-      slope.rotate(-1 * UNIT_ANGLE);
-    }  
+    if(diff_x > 0){
+      for(Slope slope: slopes){
+        slope.rotate(UNIT_ANGLE);
+      }    
+    }
+    else{
+      for(Slope slope: slopes){
+        slope.rotate(-1 * UNIT_ANGLE);
+      }  
+    }
   }
 
 }
 
+// センサー操作
+void sensorRotate(){
+  
+  if(CONTROLLER == SENSOR){
+    // シリアルポートからデータ取得
+    serialEvent(port);
+    
+    for(Slope slope: slopes){
+     float angle = radians(int(degX)+1);
+     slope.setRotation(angle);
+    }
+  }
+}
+
+// シリアル通信
 void serialEvent(Serial port){
   String data = port.readStringUntil('\n');
 
@@ -212,7 +247,10 @@ void serialEvent(Serial port){
     if(sensors.length == 2){
       degX = sensors[0];
       degY = sensors[1];
-      println(degX + ":" + degY);
+      
+      if(CONTROLLER == SENSOR){
+        println(degX + ":" + degY);
+      }
     }
    
   }

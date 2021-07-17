@@ -20,9 +20,10 @@ FCircle ball;
 FCircle goal;
 ArrayList<Slope> slopes;
 ArrayList<Jump> jumps;
+String author;
 
 // スロープの角度
-float UNIT_ANGLE = PI / 180;
+float UNIT_ANGLE = PI / 360;
 
 // 効果音
 Minim minim;
@@ -41,18 +42,19 @@ float degX;
 float degY;
 
 // 最大ステージ数
-int MAX_STAGE = 4;
+int MAX_STAGE = 5;
 
 // 現在のステージ
-int stage = 0;
+int stage = 4;
 
 // ライフ
-int MAX_LIFE = 5;
+int MAX_LIFE = 10;
 int life = MAX_LIFE;
 
 // 重力
-int MIN_GRAVITY = 500;
-int gravity = MIN_GRAVITY;
+int DIFF_GRAVITY = 200;
+int MIN_GRAVITY = 1000;
+int gravity = MIN_GRAVITY - DIFF_GRAVITY;
 
 void setup(){
   size(1200, 800);
@@ -90,10 +92,11 @@ void draw(){
     world.draw();
     world.step();
     
-    textSize(30);
-    text("Stage: " + stage, width-250, 50);
-    text("Life: " + life, width-250, 90);
-    text("Gravity: " + gravity, width-250, 130);
+    textSize(20);
+    text("Author: " + author, width-250, 50);
+    text("Stage: " + stage, width-250, 90);
+    text("Life: " + life, width-250, 130);
+    text("Gravity: " + gravity, width-250, 170);
   
     if(isFail()){
       if(life == 0){
@@ -102,6 +105,7 @@ void draw(){
         initStage();
       }
       else{
+        resetSlope();
         initBall();
       }
     }
@@ -116,7 +120,7 @@ void initWorld(){
 }
 
 void initBall(){
-  ball = new Ball(30, 100, 0);
+  ball = new Ball(100, 0);
   world.add(ball);
   
   fall_sound.rewind();
@@ -136,6 +140,12 @@ void initJump(){
 void initSlope(){
   for(Slope slope: slopes){
     world.add(slope);
+  }
+}
+
+void resetSlope(){
+  for(Slope slope:slopes){
+    slope.setRotation(UNIT_ANGLE);
   }
 }
 
@@ -193,7 +203,7 @@ void initStage(){
     
     bgm_sound.pause();
     
-    gravity = MIN_GRAVITY;
+    gravity = MIN_GRAVITY - DIFF_GRAVITY;
     world.setGravity(0, gravity);
     start_bt.setVisible(true);
   }
@@ -201,7 +211,7 @@ void initStage(){
     
     bgm_sound.loop();
     
-    gravity = gravity + 500;
+    gravity = gravity + DIFF_GRAVITY;
     world.setGravity(0, gravity);
     
     String filename = "stage" + stage + ".json";
@@ -242,7 +252,7 @@ void loadStage(String filename){
         int x = json_jump.getInt("x");
         int y = json_jump.getInt("y");
         
-        Jump jump = new Jump(50, x, y);
+        Jump jump = new Jump(x, y);
         jumps.add(jump);
         
       }   
@@ -251,7 +261,11 @@ void loadStage(String filename){
     JSONObject json_goal = json.getJSONObject("goal");
     int x = json_goal.getInt("x");
     int y = json_goal.getInt("y");
-    goal = new Goal(50, x, y);
+    goal = new Goal(x, y);
+    
+    String json_author = json.getString("author");
+    author = json_author;
+    
     
 }
 
@@ -336,8 +350,12 @@ void serialEvent(Serial port){
 
 class Ball extends FCircle{
   
-  Ball(float radius, float circle_x, float circle_y){
+  static final int radius = 30;
+  
+  Ball(float circle_x, float circle_y){
     super(radius);
+    this.setGrabbable(false);
+    this.setRestitution(0.5);
     this.setPosition(circle_x, circle_y);
     this.setFillColor(color(255, 255, 0));
     this.setStrokeColor(color(255, 255, 0));
@@ -347,12 +365,16 @@ class Ball extends FCircle{
 
 class Jump extends FCircle{
   
-  Jump(float radius, float circle_x, float circle_y){
+  static final int radius = 100;
+  
+  Jump(float circle_x, float circle_y){
+
     super(radius);
     this.setPosition(circle_x, circle_y);
     this.setFillColor(color(0, 255, 0));
     this.setStrokeColor(color(0, 255, 0));
     this.setStatic(true);
+    this.setGrabbable(false);
     this.setRestitution(1);
   }
   
@@ -360,9 +382,12 @@ class Jump extends FCircle{
 
 class Goal extends FCircle{
   
-   Goal(float radius, float goal_x, float goal_y){
+  static final int radius = 50;
+  
+  Goal(float goal_x, float goal_y){
     super(radius);
     this.setStatic(true);
+    this.setGrabbable(false);
     this.setPosition(goal_x, goal_y);
     this.setFillColor(color(255, 0, 0));
     this.setStrokeColor(color(255, 0, 0));
@@ -375,6 +400,8 @@ class Slope extends FBox{
   Slope(float width, float height){
     super(width, height);
     this.setStatic(true);
+    this.setGrabbable(false);
+    this.setRestitution(0.5);
   }
   
   void rotate(float angle){

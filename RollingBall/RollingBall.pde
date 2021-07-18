@@ -17,8 +17,8 @@ int CONTROLLER = KEYBOARD;
 
 // 物理演算
 FWorld world;
-FCircle ball;
-FCircle goal;
+Ball ball;
+Goal goal;
 ArrayList<Slope> slopes;
 ArrayList<Jump> jumps;
 ArrayList<Lift> lifts;
@@ -149,7 +149,7 @@ void initWorld(){
 
 // ボールの初期化
 void initBall(){
-  ball = new Ball(100, 0);
+  ball.reset();
   world.add(ball);
   
   fall_sound.rewind();
@@ -341,6 +341,10 @@ void loadStage(String filename){
         lifts.add(lift);
       }
     }
+ 
+    JSONObject json_ball = json.getJSONObject("ball");
+    int init_x = json_ball.getInt("x");
+    ball = new Ball(init_x); 
     
     JSONObject json_goal = json.getJSONObject("goal");
     int x = json_goal.getInt("x");
@@ -475,15 +479,21 @@ void serialEvent(Serial port){
 class Ball extends FCircle{
   
   static final int radius = 30;
+  float init_x;
   
-  Ball(float circle_x, float circle_y){
+  Ball(float init_x){
     super(radius);
+    this.init_x = init_x;
     this.setGrabbable(false);
     this.setRestitution(0.5);
     this.setFriction(0);
-    this.setPosition(circle_x, circle_y);
+    this.setPosition(init_x, 0);
     this.setFillColor(color(255, 255, 0));
     this.setStrokeColor(color(255, 255, 0));
+  }
+  
+  void reset(){
+    this.setPosition(init_x, 0);
   }
   
 }

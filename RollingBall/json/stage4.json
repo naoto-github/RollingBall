@@ -1,5 +1,8 @@
 {
     "author": "Naoto",
+    "ball": {
+	x: 100
+    },
     "slopes":[
 	{
 	    "x": 200,

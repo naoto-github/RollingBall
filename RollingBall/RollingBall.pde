@@ -13,7 +13,7 @@ import processing.serial.*;
 final int MOUSE = 0;
 final int SENSOR = 1;
 final int KEYBOARD = 2;
-int CONTROLLER = MOUSE;
+int CONTROLLER = KEYBOARD;
 
 // 物理演算
 FWorld world;
@@ -21,6 +21,7 @@ FCircle ball;
 FCircle goal;
 ArrayList<Slope> slopes;
 ArrayList<Jump> jumps;
+ArrayList<Lift> lifts;
 String author;
 
 // スロープの角度
@@ -44,12 +45,10 @@ Serial port;
 float degX;
 float degY;
 
-// 最大ステージ数
-int MAX_STAGE = 5;
-
 // ステージ
 final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
+int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
 
 // ライフ
@@ -61,15 +60,27 @@ int DIFF_GRAVITY = 1000;
 int MIN_GRAVITY = 1000;
 int gravity = MIN_GRAVITY;
 
-
 void setup(){
+  
+  // ウィンドウ・サイズ
   size(1200, 800);
+  
+  // アンチ・エイリアス
   smooth();
   
+  // フォントの初期化
   initFont();
+  
+  // ボタンの初期化
   initButton();
+  
+  // 効果音の初期化
   initSound();
+  
+  // 空間の初期化
   initWorld();
+  
+  // ステージの初期化
   initStage();
   
   // シリアルポート
@@ -79,6 +90,7 @@ void setup(){
   }
 }
 
+// フレーム毎の処理
 void draw(){
   
   if(stage == STAGE_OPENING){
@@ -99,9 +111,11 @@ void draw(){
   }
   else{
         
-    sensorRotate();
+    sensorRotate(); // センサによる回転
+    updateLift(); // リフトの上下運動
     
-    background(color(0, 0, 0));
+    background(color(0, 0, 0)); // 背景色
+    
     world.draw();
     world.step();
     
@@ -125,6 +139,7 @@ void draw(){
   }
 }
 
+// 空間の初期化
 void initWorld(){
   Fisica.init(this);
   world = new FWorld();
@@ -132,6 +147,7 @@ void initWorld(){
   world.setEdges(0, -100, width, height+100, color(105,105,105));
 }
 
+// ボールの初期化
 void initBall(){
   ball = new Ball(100, 0);
   world.add(ball);
@@ -140,28 +156,47 @@ void initBall(){
   fall_sound.play();
 }
 
+// ゴールの初期化
 void initGoal(){
   world.add(goal);
 }
 
+// ジャンプ台の初期化
 void initJump(){
   for(Jump jump: jumps){
     world.add(jump);
   }
 }
 
+// リフトの初期化
+void initLift(){
+  for(Lift lift: lifts){
+    world.add(lift);
+  }
+}
+
+// リフトの更新
+void updateLift(){
+  for(Lift lift: lifts){
+    lift.update();
+  }
+}
+
+// スロープの初期化
 void initSlope(){
   for(Slope slope: slopes){
     world.add(slope);
   }
 }
 
+// スロープの回転をリセット
 void resetSlope(){
   for(Slope slope:slopes){
     slope.setRotation(UNIT_ANGLE);
   }
 }
 
+// 接触判定
 void contactStarted(FContact contact){
 
   // ボールとゴールの接触
@@ -176,7 +211,7 @@ void contactStarted(FContact contact){
   
 }
 
-
+// 効果音の初期化
 void initSound(){
   minim = new Minim(this);
   
@@ -188,6 +223,7 @@ void initSound(){
   bgm_sound.setGain(-15);
 }
 
+// ボタンの初期化
 void initButton(){
     
   start_bt = new ControlP5(this);
@@ -212,15 +248,18 @@ void initButton(){
   
 }
 
+// フォントの初期化
 void initFont(){
   font = createFont("Verdana Bold Italic", 64);
   textFont(font);
 }
 
+// ステージの初期化
 void initStage(){
  
   slopes = new ArrayList<Slope>();
   jumps = new ArrayList<Jump>();
+  lifts = new ArrayList<Lift>();
   world.clear();
   
   if(stage == STAGE_OPENING){
@@ -249,10 +288,12 @@ void initStage(){
     initGoal();
     initSlope();
     initJump();
+    initLift();
   }
   
 }
 
+// JSONのロード
 void loadStage(String filename){
     JSONObject json = loadJSONObject("./json/" + filename);
     
@@ -265,7 +306,7 @@ void loadStage(String filename){
       int w = json_slope.getInt("w");
       int h = json_slope.getInt("h");
       
-      Slope slope = new Slope(w, h);
+      Slope slope = new Slope(x, y, w, h);
       slope.setPosition(x, y);
       slope.rotate(UNIT_ANGLE);
       slopes.add(slope);
@@ -273,7 +314,6 @@ void loadStage(String filename){
     }
     
     JSONArray json_jumps = json.getJSONArray("jumps");
-    
     if(json_jumps != null){
       for(int i=0; i<json_jumps.size(); i++){
         JSONObject json_jump = json_jumps.getJSONObject(i);
@@ -284,6 +324,22 @@ void loadStage(String filename){
         jumps.add(jump);
         
       }   
+    }
+    
+    JSONArray json_lifts = json.getJSONArray("lifts");
+    if(json_lifts != null){
+      for(int i=0; i<json_lifts.size(); i++){
+        JSONObject json_lift = json_lifts.getJSONObject(i);
+        int x = json_lift.getInt("x");
+        int y = json_lift.getInt("y");
+        int w = json_lift.getInt("w");
+        int h = json_lift.getInt("h");
+        int l = json_lift.getInt("l");
+        float a = json_lift.getFloat("r");
+        
+        Lift lift = new Lift(x, y, w, h, l, a);
+        lifts.add(lift);
+      }
     }
     
     JSONObject json_goal = json.getJSONObject("goal");
@@ -297,6 +353,7 @@ void loadStage(String filename){
     
 }
 
+// 次のステージに遷移
 void nextStage(){
   start_bt.setVisible(false);
   restart_bt.setVisible(false);
@@ -414,6 +471,7 @@ void serialEvent(Serial port){
   }
 }
 
+// ボール
 class Ball extends FCircle{
   
   static final int radius = 30;
@@ -422,6 +480,7 @@ class Ball extends FCircle{
     super(radius);
     this.setGrabbable(false);
     this.setRestitution(0.5);
+    this.setFriction(0);
     this.setPosition(circle_x, circle_y);
     this.setFillColor(color(255, 255, 0));
     this.setStrokeColor(color(255, 255, 0));
@@ -429,6 +488,7 @@ class Ball extends FCircle{
   
 }
 
+// ジャンプ台
 class Jump extends FCircle{
   
   static final int radius = 100;
@@ -446,6 +506,7 @@ class Jump extends FCircle{
   
 }
 
+// ゴール
 class Goal extends FCircle{
   
   static final int radius = 50;
@@ -461,19 +522,63 @@ class Goal extends FCircle{
   
 }
 
+// スロープ
 class Slope extends FBox{
   
-  Slope(float width, float height){
+  float x;
+  float y;
+  
+  Slope(float x, float y, float width, float height){
     super(width, height);
+    this.x = x;
+    this.y = y;
     this.setStatic(true);
     this.setGrabbable(false);
     this.setRestitution(0.5);
+    this.setFillColor(color(255));
+    this.setStrokeColor(color(255));
   }
   
   void rotate(float angle){
       float base_angle = this.getRotation();
       translate(500, 500);
       this.setRotation(base_angle + angle);
+  }
+  
+}
+
+// リフト
+class Lift extends FBox{
+  
+  float upper;
+  float lower;
+  float speed = 1;
+  
+  Lift(float x, float y, float width, float height, float length, float angle){
+    super(width, height);
+    this.setPosition(x, y);
+    this.upper = y + (length / 2);
+    this.lower = y - (length / 2);
+    this.setStatic(true);
+    this.setGrabbable(false);
+    this.setRestitution(0.5);
+    this.setRotation(angle);
+    this.setFriction(0);
+    this.setFillColor(color(0, 0, 255));
+    this.setStrokeColor(color(0, 0, 255));
+  }
+  
+  void update(){
+    float x = this.getX();
+    float y = this.getY() + speed;
+    this.setPosition(x, y);
+    
+    if(y >= this.upper){
+      speed = -1 * speed;
+    }
+    else if(y <= this.lower){
+       speed = -1 * speed;
+    }
   }
   
 }

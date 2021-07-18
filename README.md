@@ -8,3 +8,15 @@ Arduionoで6軸センサーの加速度・角速度を取得し **傾き** を�
 
 - Arduino UNO
 - MPU6050(6軸センサー)
+
+## 操作方法の変更
+
+ゲームの操作は，傾きセンサー（MPU6050），マウス，キーボードが利用できます．
+
+```python
+// 操作方法
+final int MOUSE = 0;
+final int SENSOR = 1;
+final int KEYBOARD = 2;
+int CONTROLLER = KEYBOARD;
+```

@@ -12,6 +12,7 @@ import processing.serial.*;
 // 操作方法
 final int MOUSE = 0;
 final int SENSOR = 1;
+final int KEYBOARD = 2;
 int CONTROLLER = MOUSE;
 
 // 物理演算
@@ -23,7 +24,7 @@ ArrayList<Jump> jumps;
 String author;
 
 // スロープの角度
-float UNIT_ANGLE = PI / 360;
+float UNIT_ANGLE = PI / 180;
 
 // 効果音
 Minim minim;
@@ -31,10 +32,12 @@ AudioPlayer fall_sound;
 AudioPlayer clear_sound;
 AudioPlayer fail_sound;
 AudioPlayer bgm_sound;
+AudioPlayer end_sound;
 
 // ボタン
-ControlP5 start_bt;
 PFont font;
+ControlP5 start_bt;
+ControlP5 restart_bt;
 
 // シリアル通信
 Serial port;
@@ -44,17 +47,20 @@ float degY;
 // 最大ステージ数
 int MAX_STAGE = 5;
 
-// 現在のステージ
-int stage = 4;
+// ステージ
+final int STAGE_OPENING = -1;
+final int STAGE_ENDING = -2;
+int stage = STAGE_OPENING;
 
 // ライフ
 int MAX_LIFE = 10;
 int life = MAX_LIFE;
 
 // 重力
-int DIFF_GRAVITY = 200;
+int DIFF_GRAVITY = 1000;
 int MIN_GRAVITY = 1000;
-int gravity = MIN_GRAVITY - DIFF_GRAVITY;
+int gravity = MIN_GRAVITY;
+
 
 void setup(){
   size(1200, 800);
@@ -75,14 +81,21 @@ void setup(){
 
 void draw(){
   
-  if(stage == 0){
-
+  if(stage == STAGE_OPENING){
     background(color(0, 0, 0));
     fill(255);
     textSize(128);
     text("Rolling Ball", width / 2 - 410, height/2 - 100);
     textSize(32);
     text("Developed by mLab", width / 2 - 180, height/2 - 30);
+  }
+  else if(stage == STAGE_ENDING){
+    background(color(0, 0, 0));
+    fill(color(255, 255, 0));
+    textSize(128);
+    text("GAME CLEAR", width / 2 - 450, height/2 - 100);
+    textSize(32);
+    text("Next Gravity is " + (gravity+1000), width / 2 - 180, height/2 - 30);
   }
   else{
         
@@ -92,6 +105,7 @@ void draw(){
     world.draw();
     world.step();
     
+    fill(255);
     textSize(20);
     text("Author: " + author, width-250, 50);
     text("Stage: " + stage, width-250, 90);
@@ -100,8 +114,7 @@ void draw(){
   
     if(isFail()){
       if(life == 0){
-        stage = 0;
-        life = MAX_LIFE;
+        stage = STAGE_OPENING;
         initStage();
       }
       else{
@@ -170,6 +183,7 @@ void initSound(){
   fall_sound = minim.loadFile("sound/fall.mp3");
   clear_sound = minim.loadFile("sound/clear.mp3");
   fail_sound = minim.loadFile("sound/fail.mp3");
+  end_sound = minim.loadFile("sound/end.mp3");
   bgm_sound = minim.loadFile("sound/bgm.mp3");
   bgm_sound.setGain(-15);
 }
@@ -186,6 +200,16 @@ void initButton(){
     
   start_bt.setVisible(false);
   
+  restart_bt = new ControlP5(this);
+  
+  restart_bt.addButton("nextStage")
+    .setLabel("RESTART")
+    .setPosition(width/2 - 200, height/2 + 100)
+    .setSize(400, 100)
+    .setFont(font);
+    
+  restart_bt.setVisible(false);
+  
 }
 
 void initFont(){
@@ -199,20 +223,24 @@ void initStage(){
   jumps = new ArrayList<Jump>();
   world.clear();
   
-  if(stage == 0){
+  if(stage == STAGE_OPENING){
     
     bgm_sound.pause();
     
-    gravity = MIN_GRAVITY - DIFF_GRAVITY;
     world.setGravity(0, gravity);
     start_bt.setVisible(true);
+  }
+  else if(stage == STAGE_ENDING){
+    
+    bgm_sound.pause();
+    end_sound.rewind();
+    end_sound.play();
+    
+    restart_bt.setVisible(true);
   }
   else{
     
     bgm_sound.loop();
-    
-    gravity = gravity + DIFF_GRAVITY;
-    world.setGravity(0, gravity);
     
     String filename = "stage" + stage + ".json";
     loadStage(filename);
@@ -271,8 +299,26 @@ void loadStage(String filename){
 
 void nextStage(){
   start_bt.setVisible(false);
+  restart_bt.setVisible(false);
   
-  stage = ((stage + 1) % (MAX_STAGE+1));
+  if(stage == MAX_STAGE){
+    stage = STAGE_ENDING;
+  }
+  else if(stage == STAGE_OPENING){
+    stage = 1;
+    life = MAX_LIFE;
+    gravity = MIN_GRAVITY;
+  }
+  else if(stage == STAGE_ENDING){
+    stage = 1;
+    life = MAX_LIFE;
+    
+    gravity = gravity + DIFF_GRAVITY;
+    world.setGravity(0, gravity);
+  }
+  else{
+    stage = stage + 1;
+  }
   
   initStage();
 }
@@ -311,6 +357,26 @@ void mouseDragged(){
     }
   }
 
+}
+
+// キーボード操作
+void keyPressed(){
+  if(CONTROLLER == KEYBOARD){
+    
+    if(key == CODED){
+      if(keyCode == LEFT){
+        for(Slope slope: slopes){
+          slope.rotate(-1 * UNIT_ANGLE);
+        }  
+      }
+      else if(keyCode == RIGHT){
+        for(Slope slope: slopes){
+          slope.rotate(UNIT_ANGLE);
+        } 
+      }
+    }
+    
+  }
 }
 
 // センサー操作

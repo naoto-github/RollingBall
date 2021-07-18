@@ -150,6 +150,7 @@ void initWorld(){
 // ボールの初期化
 void initBall(){
   ball.reset();
+  world.remove(ball);
   world.add(ball);
   
   fall_sound.rewind();

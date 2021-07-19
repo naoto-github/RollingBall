@@ -9,7 +9,16 @@ Arduionoで6軸センサーの加速度・角速度を取得し **傾き** を�
 - Arduino UNO
 - MPU6050(6軸センサー)
 
-[![Image from Gyazo](https://i.gyazo.com/7115ed40be43a0723ddb92b48f653cbd.jpg)](https://gyazo.com/7115ed40be43a0723ddb92b48f653cbd)
+ブレッドボードを介して，MPU6050とArduinoを配線します．
+MPU6050はI2Cインタフェースによりデータ送信（シリアル通信）します．
+ここで，SCLはクロック信号，SDAはデータ信号です．
+
+- VCC -> 5V
+- GND -> GND
+- SCL -> A5(SCL)
+- SDA -> A4(SDA)
+
+<a href="https://gyazo.com/7115ed40be43a0723ddb92b48f653cbd"><img src="https://i.gyazo.com/7115ed40be43a0723ddb92b48f653cbd.jpg" alt="Image from Gyazo" width="400"/></a>
 
 ## Processingの設定
 

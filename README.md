@@ -9,6 +9,8 @@ Arduionoで6軸センサーの加速度・角速度を取得し **傾き** を�
 - Arduino UNO
 - MPU6050(6軸センサー)
 
+[![Image from Gyazo](https://i.gyazo.com/7115ed40be43a0723ddb92b48f653cbd.jpg)](https://gyazo.com/7115ed40be43a0723ddb92b48f653cbd)
+
 ## Processingの設定
 
 次のライブラリをインストールする必要があります．
@@ -62,7 +64,7 @@ int CONTROLLER = KEYBOARD;
 ```json
 "goal": {
 	"x": 350,
-	"y": 650	
+	"y": 650
 }
 ```
 
@@ -92,7 +94,7 @@ int CONTROLLER = KEYBOARD;
 
 リフトの位置:x,y，大きさ:w,h，移動距離:l，回転角度:rを設定します．
 位置は重心で表されることに注意してください．
-また，回転角度は **0** にはせず，必ず角度（ラジアン角）を設定してください． 
+また，回転角度は **0** にはせず，必ず角度（ラジアン角）を設定してください．
 
 ```json
 "lifts":[
@@ -111,6 +113,6 @@ int CONTROLLER = KEYBOARD;
 		"h": 10,
 		"l": 200,
 		"r": 0.2
-	}	
+	}
 ]
 ```

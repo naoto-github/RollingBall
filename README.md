@@ -125,3 +125,7 @@ int CONTROLLER = KEYBOARD;
 	}
 ]
 ```
+
+## コースのサンプル
+
+<a href="https://gyazo.com/35e68a428b1d8df98777c51695ae85f1"><img src="https://i.gyazo.com/35e68a428b1d8df98777c51695ae85f1.png" alt="Image from Gyazo" width="400"/></a>

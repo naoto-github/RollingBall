@@ -151,11 +151,11 @@ int CONTROLLER = KEYBOARD;
 {
   "author": "Naoto",
   "ball": {
-	   x: 250
+	   	"x": 250
    },
    "goal": {
-     "x": 1050,
-      "y": 650
+     	"x": 1050,
+    	"y": 650
    },
    "slopes":[
      {

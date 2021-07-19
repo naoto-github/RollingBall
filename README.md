@@ -44,8 +44,8 @@ int CONTROLLER = KEYBOARD;
 
 コースはJSONファイルに記述します．
 ファイル名は **stage1.json** のように設定し，番号の小さなファイルから読み込まれます．
-コースサイズは **1200x800** であり，**ボール**，**ゴール**，**スロープ（坂道）**，**リフト** の4種類を配置することができます．
-また，スロープとリフトは複数配置することが可能です．
+コースサイズは **1200x800** であり，**ボール**，**ゴール**，**スロープ（坂道）**，**リフト**，**ジャンプボール** の5種類を配置することができます．
+また，スロープ，リフト，ジャンプボールは複数配置することが可能です．
 
 ### 作成者名
 
@@ -126,6 +126,21 @@ int CONTROLLER = KEYBOARD;
 ]
 ```
 
+### ジャンプボール
+
+ジャンプボールの位置:x,yを設定します．
+
+```json
+"jumps":[
+	{
+		"x":900,
+		"y":650
+	}
+]
+```
+
 ## コースのサンプル
 
-<a href="https://gyazo.com/35e68a428b1d8df98777c51695ae85f1"><img src="https://i.gyazo.com/35e68a428b1d8df98777c51695ae85f1.png" alt="Image from Gyazo" width="400"/></a>
+<a href="https://gyazo.com/c36c261522e49fadf0fdbd364d9c72df"><img src="https://i.gyazo.com/c36c261522e49fadf0fdbd364d9c72df.png" alt="Image from Gyazo" width="400"/></a>
+
+<a href="https://gyazo.com/3a77791f91bfbfbdfb5792322af173d1"><img src="https://i.gyazo.com/3a77791f91bfbfbdfb5792322af173d1.gif" alt="Image from Gyazo" width="1050"/></a>

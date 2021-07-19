@@ -50,6 +50,7 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
+//int stage = 8;
 
 // ライフ
 int MAX_LIFE = 10;

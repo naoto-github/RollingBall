@@ -146,3 +146,40 @@ int CONTROLLER = KEYBOARD;
 <a href="https://gyazo.com/c36c261522e49fadf0fdbd364d9c72df"><img src="https://i.gyazo.com/c36c261522e49fadf0fdbd364d9c72df.png" alt="Image from Gyazo" width="400"/></a>
 
 <a href="https://gyazo.com/3a77791f91bfbfbdfb5792322af173d1"><img src="https://i.gyazo.com/3a77791f91bfbfbdfb5792322af173d1.gif" alt="Image from Gyazo" width="400"/></a>
+
+```json
+{
+  "author": "Naoto",
+  "ball": {
+	   x: 250
+   },
+   "goal": {
+     "x": 1050,
+      "y": 650
+   },
+   "slopes":[
+     {
+       "x": 300,
+	     "y": 250,
+	     "w": 400,
+	     "h": 100
+     }
+   ],
+   "lifts":[
+     {
+       "x": 800,
+       "y": 450,
+       "w": 400,
+       "h": 100,
+       "l": 200,
+       "r": 0.01
+     }
+   ],
+   "jumps":[
+     {
+	      "x":550,
+        "y":350
+      }
+    ]
+}
+```

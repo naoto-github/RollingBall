@@ -48,11 +48,11 @@ String PORT = "COM5"; // for Windows
 //String PORT = "/dev/cu.usbmodem11301"; // for Mac
 
 // ステージ
-final int STAGE_OPENING = 3;
+final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
-//int stage = 8;
+//int stage = 4;
 
 // ライフ
 int MAX_LIFE = 10;
@@ -91,6 +91,7 @@ void setup(){
     port = new Serial(this, PORT, 9600);
     port.bufferUntil('\n'); // 改行までをバッファ
   }
+  
 }
 
 // フレーム毎の処理

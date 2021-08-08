@@ -48,7 +48,7 @@ String PORT = "COM5"; // for Windows
 //String PORT = "/dev/cu.usbmodem11301"; // for Mac
 
 // ステージ
-final int STAGE_OPENING = -1;
+final int STAGE_OPENING = 3;
 final int STAGE_ENDING = -2;
 int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;

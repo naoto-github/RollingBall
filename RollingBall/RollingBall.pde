@@ -13,7 +13,7 @@ import processing.serial.*;
 final int MOUSE = 0;
 final int SENSOR = 1;
 final int KEYBOARD = 2;
-int CONTROLLER = KEYBOARD;
+int CONTROLLER = SENSOR;
 
 // 物理演算
 FWorld world;
@@ -44,8 +44,8 @@ ControlP5 restart_bt;
 Serial port;
 float degX;
 float degY;
-String PORT = "COM5"; // for Windows
-//String PORT = "/dev/cu.usbmodem11301"; // for Mac
+//String PORT = "COM5"; // for Windows
+String PORT = "/dev/cu.usbmodem11101"; // for Mac
 
 // ステージ
 final int STAGE_OPENING = -1;

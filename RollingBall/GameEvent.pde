@@ -21,6 +21,14 @@ void mouseDragged(){
 
 // キーボード操作
 void keyPressed(){
+  
+  if(key == 'r'){
+     if(stage != -1 && stage != -2){
+        println("restart");
+        fail();
+      }
+  }
+  
   if(CONTROLLER == KEYBOARD){
     
     if(key == CODED){
@@ -35,14 +43,7 @@ void keyPressed(){
         } 
       }
     }
-    else{
-      if(key == 'r'){
-        if(stage != -1 && stage != -2){
-          println("restart");
-          fail();
-        }
-      }
-    }
     
   }
+
 }

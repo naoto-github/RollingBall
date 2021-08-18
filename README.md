@@ -42,7 +42,7 @@ int CONTROLLER = KEYBOARD;
 
 また，キーボードの**r**でリセット，**ESC**でゲームは終了します．
 
-<a href="https://gyazo.com/60715489692e73e9ecca297f129087b6"><video alt="Video from Gyazo" width="400" autoplay muted loop playsinline controls><source src="https://i.gyazo.com/60715489692e73e9ecca297f129087b6.mp4" type="video/mp4" /></video></a>
+<a href="https://gyazo.com/60715489692e73e9ecca297f129087b6"><img src="https://i.gyazo.com/60715489692e73e9ecca297f129087b6.gif" alt="Image from Gyazo" width="640"/></a>
 
 ## コースの作成
 

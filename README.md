@@ -42,6 +42,8 @@ int CONTROLLER = KEYBOARD;
 
 また，キーボードの**r**でリセット，**ESC**でゲームは終了します．
 
+<a href="https://gyazo.com/60715489692e73e9ecca297f129087b6"><img src="https://i.gyazo.com/60715489692e73e9ecca297f129087b6.gif" alt="Image from Gyazo" width="400"/></a>
+
 ## コースの作成
 
 コースはJSONファイルに記述します．

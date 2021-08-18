@@ -24,21 +24,23 @@ MPU6050はI2Cインタフェースによりデータ送信（シリアル通信�
 
 次のライブラリをインストールする必要があります．
 
-- Fisica（物理演算）
-- ControlP5（GUI）
+- [Fisica](http://www.ricardmarxer.com/fisica/)（物理演算）
+- [ControlP5](http://www.sojamo.de/libraries/controlP5/)（GUI）
 - Minim（サウンド）
 
 ## 操作方法の変更
 
 ゲームの操作は，傾きセンサー（MPU6050），マウス，キーボードが利用できます．
 
-```python
+```java
 // 操作方法
 final int MOUSE = 0;
 final int SENSOR = 1;
 final int KEYBOARD = 2;
 int CONTROLLER = KEYBOARD;
 ```
+
+また，キーボードの**r**でリセット，**ESC**でゲームは終了します．
 
 ## コースの作成
 

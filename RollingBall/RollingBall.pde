@@ -38,6 +38,7 @@ AudioPlayer end_sound;
 // ボタン
 PFont font;
 ControlP5 start_bt;
+ControlP5 original_bt;
 ControlP5 restart_bt;
 
 // シリアル通信
@@ -50,9 +51,9 @@ String PORT = "/dev/cu.usbmodem11101"; // for Mac
 // ステージ
 final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
-int MAX_STAGE = 1; // 最大ステージ数
+final int STAGE_ORIGINAL = -3;
+int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
-//int stage = 4;
 
 // ライフ
 int MAX_LIFE = 10;
@@ -157,18 +158,33 @@ void initSound(){
 // ボタンの初期化
 void initButton(){
     
+  // スタートボタン
   start_bt = new ControlP5(this);
   
   start_bt.addButton("nextStage")
     .setLabel("START")
-    .setPosition(width/2 - 150, height/2 + 100)
-    .setSize(300, 100)
+    .setPosition(width/2 - 450, height/2 + 100)
+    .setSize(400, 100)
     .setFont(font);
     
   start_bt.setVisible(false);
   
   restart_bt = new ControlP5(this);
   
+  // オリジナルボタン
+  original_bt = new ControlP5(this);
+  
+  original_bt.addButton("nextStage")
+    .setLabel("ORIGINAL")
+    .setPosition(width/2  + 50, height/2 + 100)
+    .setSize(400, 100)
+    .setFont(font);
+    
+  original_bt.setVisible(false);
+  
+  restart_bt = new ControlP5(this);
+  
+  // リスタートボタン
   restart_bt.addButton("nextStage")
     .setLabel("RESTART")
     .setPosition(width/2 - 200, height/2 + 100)
@@ -252,6 +268,7 @@ void contactStarted(FContact contact){
 // 次のステージに遷移
 void nextStage(){
   start_bt.setVisible(false);
+  original_bt.setVisible(false);
   restart_bt.setVisible(false);
   
   if(stage == MAX_STAGE){
@@ -290,6 +307,7 @@ void initStage(){
     
     world.setGravity(0, gravity);
     start_bt.setVisible(true);
+    original_bt.setVisible(true);
   }
   else if(stage == STAGE_ENDING){
     

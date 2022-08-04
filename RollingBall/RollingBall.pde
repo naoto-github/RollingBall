@@ -13,7 +13,7 @@ import processing.serial.*;
 final int MOUSE = 0;
 final int SENSOR = 1;
 final int KEYBOARD = 2;
-int CONTROLLER = SENSOR;
+int CONTROLLER = KEYBOARD;
 
 // 物理演算
 FWorld world;
@@ -50,7 +50,7 @@ String PORT = "/dev/cu.usbmodem11101"; // for Mac
 // ステージ
 final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
-int MAX_STAGE = 7; // 最大ステージ数
+int MAX_STAGE = 1; // 最大ステージ数
 int stage = STAGE_OPENING;
 //int stage = 4;
 

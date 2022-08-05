@@ -127,7 +127,12 @@ void draw(){
     fill(255);
     textSize(20);
     text("Author: " + author, width-250, 50);
-    text("Stage: " + stage, width-250, 90);
+    if(stage == STAGE_ORIGINAL){
+      text("Stage: Original", width-250, 90);
+    }
+    else{
+      text("Stage: " + stage, width-250, 90);
+    }
     text("Life: " + life, width-250, 130);
     text("Gravity: " + gravity, width-250, 170);
   
@@ -174,7 +179,7 @@ void initButton(){
   // オリジナルボタン
   original_bt = new ControlP5(this);
   
-  original_bt.addButton("nextStage")
+  original_bt.addButton("originalStage")
     .setLabel("ORIGINAL")
     .setPosition(width/2  + 50, height/2 + 100)
     .setSize(400, 100)
@@ -265,6 +270,21 @@ void contactStarted(FContact contact){
   
 }
 
+// オリジナルステージに遷移
+void originalStage(){
+  start_bt.setVisible(false);
+  original_bt.setVisible(false);
+  restart_bt.setVisible(false);
+  
+  if(stage == STAGE_OPENING){
+    stage = STAGE_ORIGINAL;
+    life = MAX_LIFE;
+    gravity = MIN_GRAVITY;
+  }
+  
+  initStage();
+}
+
 // 次のステージに遷移
 void nextStage(){
   start_bt.setVisible(false);
@@ -285,6 +305,9 @@ void nextStage(){
     
     gravity = gravity + DIFF_GRAVITY;
     world.setGravity(0, gravity);
+  }
+  else if(stage == STAGE_ORIGINAL){
+    stage = STAGE_OPENING;
   }
   else{
     stage = stage + 1;
@@ -316,6 +339,18 @@ void initStage(){
     end_sound.play();
     
     restart_bt.setVisible(true);
+  }
+  else if(stage == STAGE_ORIGINAL){
+      bgm_sound.loop();
+    
+      String filename = "original.json";
+      loadStage(filename);
+    
+      initBall();
+      initGoal();
+      initSlope();
+      initJump();
+      initLift();
   }
   else{
     

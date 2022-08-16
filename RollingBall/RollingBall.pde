@@ -53,7 +53,8 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
 int MAX_STAGE = 7; // 最大ステージ数
-int stage = STAGE_OPENING;
+//int stage = STAGE_OPENING;
+int stage = STAGE_ENDING;
 
 // ライフ
 int MAX_LIFE = 10;
@@ -102,15 +103,16 @@ void draw(){
     background(color(0, 0, 0));
     fill(255);
     textSize(128);
-    text("Rolling Ball", width / 2 - 410, height/2 - 100);
+    text("ROLLING BALL", width / 2 - 460, height/2 - 100);
     textSize(32);
-    text("Developed by mLab", width / 2 - 180, height/2 - 30);
+    fill(color(255, 255, 0));
+    text("Developed by mLab", width / 2 - 130, height/2 - 30);
   }
   else if(stage == STAGE_ENDING){
     background(color(0, 0, 0));
     fill(color(255, 255, 0));
     textSize(128);
-    text("GAME CLEAR", width / 2 - 450, height/2 - 100);
+    text("GAME CLEAR", width / 2 - 420, height/2 - 100);
     textSize(32);
     text("Next Gravity is " + (gravity+1000), width / 2 - 180, height/2 - 30);
   }
@@ -181,7 +183,7 @@ void initButton(){
   
   original_bt.addButton("originalStage")
     .setLabel("ORIGINAL")
-    .setPosition(width/2  + 50, height/2 + 100)
+    .setPosition(width/2  + 50,  height/2 + 100)
     .setSize(400, 100)
     .setFont(font);
     
@@ -192,7 +194,7 @@ void initButton(){
   // リスタートボタン
   restart_bt.addButton("nextStage")
     .setLabel("RESTART")
-    .setPosition(width/2 - 200, height/2 + 100)
+    .setPosition(width/2 - 200,  height/2 + 100)
     .setSize(400, 100)
     .setFont(font);
     
@@ -202,7 +204,7 @@ void initButton(){
 
 // フォントの初期化
 void initFont(){
-  font = createFont("Verdana Bold Italic", 64);
+  font = loadFont("Baskerville-SemiBoldItalic-64.vlw");
   textFont(font);
 }
 

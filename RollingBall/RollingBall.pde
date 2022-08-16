@@ -53,8 +53,7 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
 int MAX_STAGE = 7; // 最大ステージ数
-//int stage = STAGE_OPENING;
-int stage = STAGE_ENDING;
+int stage = STAGE_OPENING;
 
 // ライフ
 int MAX_LIFE = 10;
@@ -64,6 +63,11 @@ int life = MAX_LIFE;
 int DIFF_GRAVITY = 1000;
 int MIN_GRAVITY = 1000;
 int gravity = MIN_GRAVITY;
+
+// タイマー
+float start_time = 0;
+float elapsed_time = 0;
+float total_time = 0;
 
 void setup(){
   
@@ -114,7 +118,7 @@ void draw(){
     textSize(128);
     text("GAME CLEAR", width / 2 - 420, height/2 - 100);
     textSize(32);
-    text("Next Gravity is " + (gravity+1000), width / 2 - 180, height/2 - 30);
+    text("Next Gravity is " + (gravity+1000),  width / 2 - 160,  height/2 - 30);
   }
   else{
         
@@ -137,9 +141,17 @@ void draw(){
     }
     text("Life: " + life, width-250, 130);
     text("Gravity: " + gravity, width-250, 170);
+    
+    elapsed_time = millis() - start_time;
+    text("Time: " + (elapsed_time / 1000) + " sec.", width-250, 210);
   
     isFail();
   }
+}
+
+// タイマーの初期化
+void initTimer(){
+  start_time = millis();
 }
 
 // 空間の初期化
@@ -366,6 +378,7 @@ void initStage(){
     initSlope();
     initJump();
     initLift();
+    initTimer();
   }  
 }
 

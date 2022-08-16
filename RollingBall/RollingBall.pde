@@ -6,7 +6,7 @@ import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 import fisica.*;
-import java.util.ArrayList;
+import java.util.UUID;
 import processing.serial.*;
 
 // 操作方法
@@ -56,7 +56,7 @@ int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
 
 // ライフ
-int MAX_LIFE = 10;
+int MAX_LIFE = 2;
 int life = MAX_LIFE;
 
 // 重力
@@ -68,6 +68,9 @@ int gravity = MIN_GRAVITY;
 float start_time = 0;
 float elapsed_time = 0;
 float total_time = 0;
+
+// ユニークID
+String uuid;
 
 void setup(){
   
@@ -91,6 +94,9 @@ void setup(){
   
   // ステージの初期化
   initStage();
+  
+  // ログの初期化
+  loadScoreLog();
   
   // シリアルポート
   if(CONTROLLER == SENSOR){
@@ -143,7 +149,7 @@ void draw(){
     text("Gravity: " + gravity, width-250, 170);
     
     elapsed_time = millis() - start_time;
-    text("Time: " + (elapsed_time / 1000) + " sec.", width-250, 210);
+    text("Time: " + floor(elapsed_time / 100) / 10.0 + " sec.", width-250, 210);
   
     isFail();
   }
@@ -306,11 +312,13 @@ void nextStage(){
   restart_bt.setVisible(false);
   
   if(stage == MAX_STAGE){
+    uuid = saveScoreLog(stage, total_time, gravity);
     stage = STAGE_ENDING;
   }
   else if(stage == STAGE_OPENING){
     stage = 1;
     life = MAX_LIFE;
+    total_time = 0;
     gravity = MIN_GRAVITY;
   }
   else if(stage == STAGE_ENDING){
@@ -325,6 +333,7 @@ void nextStage(){
   }
   else{
     stage = stage + 1;
+    total_time += elapsed_time;
   }
   
   initStage();
@@ -400,6 +409,7 @@ void fail(){
   delay(1000);
   
   if(life == 0){
+    uuid = saveScoreLog(stage, total_time, gravity);
     stage = STAGE_OPENING;
     initStage();
   }

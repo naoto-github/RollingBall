@@ -8,7 +8,7 @@ import ddf.minim.ugens.*;
 import fisica.*;
 import java.util.UUID;
 import java.util.Comparator;
-import java.util.Arrays;
+import java.util.Collections;
 import processing.serial.*;
 
 // 操作方法
@@ -54,7 +54,9 @@ String PORT = "/dev/cu.usbmodem11101"; // for Mac
 final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
+final int STAGE_RANK = -4;
 int MAX_STAGE = 7; // 最大ステージ数
+//int stage = STAGE_OPENING;
 int stage = STAGE_OPENING;
 
 // ライフ
@@ -72,6 +74,7 @@ int elapsed_time = 0;
 int total_time = 0;
 
 // スコア管理
+ScoreLog score = new ScoreLog(stage, total_time, gravity);
 ScoreList score_list = new ScoreList();
 
 void setup(){
@@ -127,6 +130,13 @@ void draw(){
     text("GAME CLEAR", width / 2 - 420, height/2 - 100);
     textSize(32);
     text("Next Gravity is " + (gravity+1000),  width / 2 - 160,  height/2 - 30);
+  }
+  else if(stage == STAGE_RANK){
+    background(color(0, 0, 0));
+    fill(color(255, 255, 0));
+    textSize(96);
+    text("Your Score: " + score.score, width / 2 - 420, height/2 - 100);
+    text("Your Rank: " + "1", width / 2 - 420, height/2 + 100);
   }
   else{
         
@@ -314,8 +324,8 @@ void nextStage(){
   restart_bt.setVisible(false);
   
   if(stage == MAX_STAGE){
-    ScoreLog score_log = new ScoreLog(stage, total_time, gravity);
-    score_list.add(score_log);
+    score = new ScoreLog(stage, total_time, gravity);
+    score_list.add(score);
     score_list.save();
     
     stage = STAGE_ENDING;
@@ -368,6 +378,11 @@ void initStage(){
     
     restart_bt.setVisible(true);
   }
+  else if(stage == STAGE_RANK){
+    bgm_sound.pause();
+    end_sound.rewind();
+    end_sound.play();
+  }
   else if(stage == STAGE_ORIGINAL){
       bgm_sound.loop();
     
@@ -414,8 +429,8 @@ void fail(){
   delay(1000);
   
   if(life == 0){
-    ScoreLog score_log = new ScoreLog(stage, total_time, gravity);
-    score_list.add(score_log);
+    score = new ScoreLog(stage, total_time, gravity);
+    score_list.add(score);
     score_list.save();
     println(score_list);
     

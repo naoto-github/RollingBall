@@ -7,6 +7,8 @@ import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 import fisica.*;
 import java.util.UUID;
+import java.util.Comparator;
+import java.util.Arrays;
 import processing.serial.*;
 
 // 操作方法
@@ -56,7 +58,7 @@ int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
 
 // ライフ
-int MAX_LIFE = 2;
+int MAX_LIFE = 1;
 int life = MAX_LIFE;
 
 // 重力
@@ -65,12 +67,12 @@ int MIN_GRAVITY = 1000;
 int gravity = MIN_GRAVITY;
 
 // タイマー
-float start_time = 0;
-float elapsed_time = 0;
-float total_time = 0;
+int start_time = 0;
+int elapsed_time = 0;
+int total_time = 0;
 
-// ユニークID
-String uuid;
+// スコア管理
+ScoreList score_list = new ScoreList();
 
 void setup(){
   
@@ -96,7 +98,7 @@ void setup(){
   initStage();
   
   // ログの初期化
-  loadScoreLog();
+  score_list.load();
   
   // シリアルポート
   if(CONTROLLER == SENSOR){
@@ -312,7 +314,10 @@ void nextStage(){
   restart_bt.setVisible(false);
   
   if(stage == MAX_STAGE){
-    uuid = saveScoreLog(stage, total_time, gravity);
+    ScoreLog score_log = new ScoreLog(stage, total_time, gravity);
+    score_list.add(score_log);
+    score_list.save();
+    
     stage = STAGE_ENDING;
   }
   else if(stage == STAGE_OPENING){
@@ -409,7 +414,11 @@ void fail(){
   delay(1000);
   
   if(life == 0){
-    uuid = saveScoreLog(stage, total_time, gravity);
+    ScoreLog score_log = new ScoreLog(stage, total_time, gravity);
+    score_list.add(score_log);
+    score_list.save();
+    println(score_list);
+    
     stage = STAGE_OPENING;
     initStage();
   }

@@ -98,6 +98,19 @@ class ScoreList extends ArrayList<ScoreLog>{
     }
   }
   
+  public int getRank(ScoreLog target_score){
+    Collections.sort(this, comparator);
+    
+    for(int i=0; i<this.size(); i++){
+      ScoreLog score = get(i);
+      if(target_score.uuid == score.uuid){
+        return (i+1);
+      }
+    }
+    
+    return -1;
+  }
+  
   public String toString(){
     Collections.sort(this, comparator);
     StringBuffer sb = new StringBuffer();

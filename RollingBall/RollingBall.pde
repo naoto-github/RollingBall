@@ -36,6 +36,7 @@ AudioPlayer clear_sound;
 AudioPlayer fail_sound;
 AudioPlayer bgm_sound;
 AudioPlayer end_sound;
+AudioPlayer rank_sound;
 
 // ボタン
 PFont font;
@@ -57,7 +58,7 @@ final int STAGE_ORIGINAL = -3;
 final int STAGE_RANK = -4;
 int MAX_STAGE = 7; // 最大ステージ数
 //int stage = STAGE_OPENING;
-int stage = STAGE_OPENING;
+int stage = STAGE_RANK;
 
 // ライフ
 int MAX_LIFE = 1;
@@ -188,6 +189,7 @@ void initSound(){
   clear_sound = minim.loadFile("sound/clear.mp3");
   fail_sound = minim.loadFile("sound/fail.mp3");
   end_sound = minim.loadFile("sound/end.mp3");
+  rank_sound = minim.loadFile("sound/rank.mp3");
   bgm_sound = minim.loadFile("sound/bgm.mp3");
   bgm_sound.setGain(-15);
 }
@@ -380,8 +382,8 @@ void initStage(){
   }
   else if(stage == STAGE_RANK){
     bgm_sound.pause();
-    end_sound.rewind();
-    end_sound.play();
+    rank_sound.rewind();
+    rank_sound.play();
   }
   else if(stage == STAGE_ORIGINAL){
       bgm_sound.loop();

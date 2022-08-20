@@ -1,3 +1,4 @@
+import com.dhchoi.*;
 import controlP5.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
@@ -56,9 +57,8 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
 final int STAGE_RANK = -4;
-int MAX_STAGE = 7; // 最大ステージ数
-//int stage = STAGE_OPENING;
-int stage = STAGE_RANK;
+int MAX_STAGE = 2; // 最大ステージ数
+int stage = STAGE_OPENING;
 
 // ライフ
 int MAX_LIFE = 1;
@@ -115,62 +115,34 @@ void setup(){
 // フレーム毎の処理
 void draw(){
   
+  // タイマーのカウント
+  countTimer();
+  
   if(stage == STAGE_OPENING){
-    background(color(0, 0, 0));
-    fill(255);
-    textSize(128);
-    text("ROLLING BALL", width / 2 - 460, height/2 - 100);
-    textSize(32);
-    fill(color(255, 255, 0));
-    text("Developed by mLab", width / 2 - 130, height/2 - 30);
+    drawOpening();
   }
   else if(stage == STAGE_ENDING){
-    background(color(0, 0, 0));
-    fill(color(255, 255, 0));
-    textSize(128);
-    text("GAME CLEAR", width / 2 - 420, height/2 - 100);
-    textSize(32);
-    text("Next Gravity is " + (gravity+1000),  width / 2 - 160,  height/2 - 30);
+   drawEnding(score);
   }
   else if(stage == STAGE_RANK){
-    background(color(0, 0, 0));
-    fill(color(255, 255, 0));
-    textSize(96);
-    text("Your Score: " + score.score, width / 2 - 420, height/2 - 100);
-    text("Your Rank: " + "1", width / 2 - 420, height/2 + 100);
+    drawRank(score, elapsed_time);
   }
   else{
-        
     sensorRotate(); // センサによる回転
-    updateLift(); // リフトの上下運動
-    
-    background(color(0, 0, 0)); // 背景色
-    
-    world.draw();
-    world.step();
-    
-    fill(255);
-    textSize(20);
-    text("Author: " + author, width-250, 50);
-    if(stage == STAGE_ORIGINAL){
-      text("Stage: Original", width-250, 90);
-    }
-    else{
-      text("Stage: " + stage, width-250, 90);
-    }
-    text("Life: " + life, width-250, 130);
-    text("Gravity: " + gravity, width-250, 170);
-    
-    elapsed_time = millis() - start_time;
-    text("Time: " + floor(elapsed_time / 100) / 10.0 + " sec.", width-250, 210);
-  
-    isFail();
+    updateLift(); // リフトの上下運動  
+    isFail(); // 落下判定
+    drawStage(world, author, stage, life, gravity, elapsed_time);
   }
 }
 
 // タイマーの初期化
 void initTimer(){
   start_time = millis();
+}
+
+// タイマーのカウント
+void countTimer(){
+  elapsed_time = millis() - start_time;
 }
 
 // 空間の初期化
@@ -226,7 +198,7 @@ void initButton(){
   // リスタートボタン
   restart_bt.addButton("nextStage")
     .setLabel("RESTART")
-    .setPosition(width/2 - 200,  height/2 + 100)
+    .setPosition(width/2 - 200,  height/2 + 250)
     .setSize(400, 100)
     .setFont(font);
     
@@ -295,7 +267,7 @@ void contactStarted(FContact contact){
 
   // ボールとゴールの接触
   if(contact.contains(ball, goal)){
-    println("clear stage" + stage);
+    println("Clear Stage: " + stage);
     clear_sound.rewind();
     clear_sound.play();
     world.remove(ball);
@@ -329,7 +301,6 @@ void nextStage(){
     score = new ScoreLog(stage, total_time, gravity);
     score_list.add(score);
     score_list.save();
-    
     stage = STAGE_ENDING;
   }
   else if(stage == STAGE_OPENING){
@@ -341,9 +312,11 @@ void nextStage(){
   else if(stage == STAGE_ENDING){
     stage = 1;
     life = MAX_LIFE;
-    
     gravity = gravity + DIFF_GRAVITY;
     world.setGravity(0, gravity);
+  }
+  else if(stage == STAGE_RANK){
+    stage = STAGE_OPENING;
   }
   else if(stage == STAGE_ORIGINAL){
     stage = STAGE_OPENING;
@@ -358,7 +331,7 @@ void nextStage(){
 
 // ステージの初期化
 void initStage(){
- 
+  
   slopes = new ArrayList<Slope>();
   jumps = new ArrayList<Jump>();
   lifts = new ArrayList<Lift>();
@@ -409,8 +382,10 @@ void initStage(){
     initSlope();
     initJump();
     initLift();
-    initTimer();
   }  
+  
+  // タイマーの初期化
+  initTimer();
 }
 
 // ボールの落下判定
@@ -430,13 +405,16 @@ void fail(){
   life = max(life - 1, 0);
   delay(1000);
   
-  if(life == 0){
-    score = new ScoreLog(stage, total_time, gravity);
-    score_list.add(score);
-    score_list.save();
-    println(score_list);
-    
-    stage = STAGE_OPENING;
+  if(life == 0){    
+    if(stage == STAGE_ORIGINAL){
+      stage = STAGE_OPENING;
+    }
+    else{
+      score = new ScoreLog(stage, total_time, gravity);
+      score_list.add(score);
+      score_list.save();
+      stage = STAGE_RANK;
+    }
     initStage();
   }
   else{

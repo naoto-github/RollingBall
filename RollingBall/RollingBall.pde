@@ -57,11 +57,11 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
 final int STAGE_RANK = -4;
-int MAX_STAGE = 2; // 最大ステージ数
+int MAX_STAGE = 7; // 最大ステージ数
 int stage = STAGE_OPENING;
 
 // ライフ
-int MAX_LIFE = 1;
+int MAX_LIFE = 10;
 int life = MAX_LIFE;
 
 // 重力

@@ -26,7 +26,7 @@ public void drawEnding(ScoreLog score){
   fill(color(255, 255, 255));
   text("Your Time: ", width / 2 - 400, height/2 + 50);
   fill(color(255, 255, 0));
-  text(score.time, width /2 + 150,  height/2 + 50);
+  text(score.time / 1000.0, width /2 + 120,  height/2 + 50);
   fill(color(255, 255, 255));
   text("Your Rank: ", width / 2 - 400, height/2 + 150);
   fill(color(255, 255, 0));
@@ -51,7 +51,7 @@ public void drawRank(ScoreLog score, int elapsed_time){
   fill(color(255, 255, 255));
   text("Your Time: ", width / 2 - 400, height/2 + 50);
   fill(color(255, 255, 0));
-  text(score.time, width /2 + 150,  height/2 + 50);
+  text(score.time / 1000.0, width /2 + 120,  height/2 + 50);
   fill(color(255, 255, 255));
   text("Your Rank: ", width / 2 - 400, height/2 + 150);
   fill(color(255, 255, 0));

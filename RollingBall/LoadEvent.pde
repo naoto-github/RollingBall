@@ -47,6 +47,18 @@ void loadStage(String filename){
       }
     }
  
+    JSONArray json_worps = json.getJSONArray("worps");
+    if(json_worps != null){
+      for(int i=0; i<json_worps.size(); i++){
+        JSONObject json_worp = json_worps.getJSONObject(i);
+        int x = json_worp.getInt("x");
+        int y = json_worp.getInt("y");
+        
+        Worp worp = new Worp(x, y);
+        worps.add(worp);
+      }
+    }
+ 
     JSONObject json_ball = json.getJSONObject("ball");
     int init_x = json_ball.getInt("x");
     ball = new Ball(init_x); 

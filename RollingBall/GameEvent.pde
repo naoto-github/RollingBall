@@ -7,7 +7,7 @@ void mouseDragged(){
 
     if(diff_x > 0){
       for(Slope slope: slopes){
-        slope.rotate(UNIT_ANGLE);
+        slope.rotate(+1 * UNIT_ANGLE);
       }    
     }
     else{
@@ -22,11 +22,18 @@ void mouseDragged(){
 // キーボード操作
 void keyPressed(){
   
-  if(key == 'r'){
-     if(stage != -1 && stage != -2){
-        println("restart");
-        fail();
-      }
+  if(stage != -1 && stage != -2){
+    // 強制的に失敗
+    if(key == 'f'){ 
+      println("fail");
+      fail();
+    }
+    // リセット
+    else if(key == 'r'){
+      println("reset");
+      life = 0;
+      fail();
+    }
   }
   
   if(CONTROLLER == KEYBOARD){
@@ -39,7 +46,7 @@ void keyPressed(){
       }
       else if(keyCode == RIGHT){
         for(Slope slope: slopes){
-          slope.rotate(UNIT_ANGLE);
+          slope.rotate(+1 * UNIT_ANGLE);
         } 
       }
     }

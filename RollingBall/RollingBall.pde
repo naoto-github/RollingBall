@@ -1,4 +1,3 @@
-import com.dhchoi.*;
 import controlP5.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
@@ -10,6 +9,7 @@ import fisica.*;
 import java.util.UUID;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.Random;
 import processing.serial.*;
 
 // 操作方法
@@ -25,6 +25,7 @@ Goal goal;
 ArrayList<Slope> slopes;
 ArrayList<Jump> jumps;
 ArrayList<Lift> lifts;
+ArrayList<Worp> worps;
 String author;
 
 // スロープの角度
@@ -38,6 +39,7 @@ AudioPlayer fail_sound;
 AudioPlayer bgm_sound;
 AudioPlayer end_sound;
 AudioPlayer rank_sound;
+AudioPlayer worp_sound;
 
 // ボタン
 PFont font;
@@ -77,6 +79,17 @@ int total_time = 0;
 // スコア管理
 ScoreLog score = new ScoreLog(stage, total_time, gravity);
 ScoreList score_list = new ScoreList();
+
+// 乱数生成
+Random rand = new Random();
+
+// ワープ
+boolean worp_contact = false;
+float worp_time = 0;
+float worp_elapsed_time = 0;
+float worp_limit_time = 3000;
+float worp_x = 0;
+float worp_y = 0;
 
 void setup(){
   
@@ -131,6 +144,7 @@ void draw(){
     sensorRotate(); // センサによる回転
     updateLift(); // リフトの上下運動  
     isFail(); // 落下判定
+    worp(); // ワープ
     drawStage(world, author, stage, life, gravity, elapsed_time);
   }
 }
@@ -162,6 +176,7 @@ void initSound(){
   fail_sound = minim.loadFile("sound/fail.mp3");
   end_sound = minim.loadFile("sound/end.mp3");
   rank_sound = minim.loadFile("sound/rank.mp3");
+  worp_sound = minim.loadFile("sound/worp.mp3");
   bgm_sound = minim.loadFile("sound/bgm.mp3");
   bgm_sound.setGain(-15);
 }
@@ -234,6 +249,13 @@ void initJump(){
   }
 }
 
+// ワープの初期化
+void initWorp(){
+  for(Worp worp: worps){
+    world.add(worp);  
+  }
+}
+
 // リフトの初期化
 void initLift(){
   for(Lift lift: lifts){
@@ -272,6 +294,27 @@ void contactStarted(FContact contact){
     clear_sound.play();
     world.remove(ball);
     nextStage();
+  }
+  
+  // ボールとワープの接触
+  if(isWorp()){
+    for(Worp worp: worps){
+      if(contact.contains(ball, worp)){
+        worp_sound.rewind();
+        worp_sound.play();
+        println("Worp");
+        
+        ArrayList<Worp> target_worps = (ArrayList<Worp>)worps.clone();
+        target_worps.remove(worp);
+        int target_index = rand.nextInt(target_worps.size());
+        Worp target_worp = target_worps.get(target_index);
+        worp_x = target_worp.x;
+        worp_y = target_worp.y;
+        worp_contact = true;
+        
+        break;
+      }
+    }
   }
   
 }
@@ -335,6 +378,8 @@ void initStage(){
   slopes = new ArrayList<Slope>();
   jumps = new ArrayList<Jump>();
   lifts = new ArrayList<Lift>();
+  worps = new ArrayList<Worp>();
+  
   world.clear();
   
   if(stage == STAGE_OPENING){
@@ -369,6 +414,7 @@ void initStage(){
       initSlope();
       initJump();
       initLift();
+      initWorp();
   }
   else{
     
@@ -382,6 +428,7 @@ void initStage(){
     initSlope();
     initJump();
     initLift();
+    initWorp();
   }  
   
   // タイマーの初期化
@@ -420,5 +467,21 @@ void fail(){
   else{
     resetSlope();
     initBall();
+  }
+}
+
+// ボールのワープ処理
+void worp(){
+  if(worp_contact){
+    ball.setPosition(worp_x, worp_y);
+    offWorp();
+    worp_contact = false;
+    worp_time = millis();
+  }
+  else{
+    worp_elapsed_time = millis() - worp_time;
+    if(worp_elapsed_time > worp_limit_time){
+      onWorp();
+    }
   }
 }

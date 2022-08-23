@@ -3,6 +3,7 @@ class Ball extends FCircle{
   
   static final int radius = 30;
   float init_x;
+  float init_y = 0;
   
   Ball(float init_x){
     super(radius);
@@ -10,13 +11,17 @@ class Ball extends FCircle{
     this.setGrabbable(false);
     this.setRestitution(0.5);
     this.setFriction(0);
-    this.setPosition(init_x, 0);
+    this.setPosition(init_x, init_y);
     this.setFillColor(color(255, 255, 0));
     this.setStrokeColor(color(255, 255, 0));
   }
   
   void reset(){
-    this.setPosition(init_x, 0);
+    this.setPosition(init_x, init_y);
+  }
+  
+  void move(float x, float y){
+    this.setPosition(x, y);
   }
   
 }
@@ -114,4 +119,50 @@ class Jump extends FCircle{
     this.setRestitution(1);
   }
   
+}
+
+// ワープ
+boolean worp_flg = true;
+class Worp extends FPoly{
+  
+  static final int length = 20;
+  public float x;
+  public float y;
+  
+  Worp(float x, float y){
+    worp_flg = true;
+    this.x = x;
+    this.y = y;
+    this.vertex(x - length, y - length);
+    this.vertex(x + length, y - length);
+    this.vertex(x + length, y + length);
+    this.vertex(x - length, y + length);
+    this.vertex(x - length, y - length);
+    this.setFillColor(color(0, 255, 255));
+    this.setStrokeColor(color(0, 255, 255));
+    this.setStatic(true);
+    this.setGrabbable(false);
+    this.setRestitution(1);
+  }  
+}
+
+  
+public boolean isWorp(){
+  return worp_flg;
+}
+
+public void onWorp(){
+  worp_flg = true;
+  for(Worp worp: worps){
+    worp.setFillColor(color(0, 255, 255));
+    worp.setStrokeColor(color(0, 255, 255));
+  }
+}
+ 
+public void offWorp(){
+  worp_flg = false;
+  for(Worp worp: worps){
+    worp.setFillColor(color(55, 55, 55));
+    worp.setStrokeColor(color(55, 55, 55));
+  }
 }

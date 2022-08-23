@@ -59,7 +59,7 @@ final int STAGE_OPENING = -1;
 final int STAGE_ENDING = -2;
 final int STAGE_ORIGINAL = -3;
 final int STAGE_RANK = -4;
-int MAX_STAGE = 7; // 最大ステージ数
+int MAX_STAGE = 10; // 最大ステージ数
 int stage = STAGE_OPENING;
 
 // ライフ

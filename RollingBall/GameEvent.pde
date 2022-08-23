@@ -34,6 +34,11 @@ void keyPressed(){
       life = 0;
       fail();
     }
+    // 次のステージへ
+    else if(key == 'n'){
+      println("next");
+      nextStage();
+    }
   }
   
   if(CONTROLLER == KEYBOARD){

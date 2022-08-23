@@ -112,6 +112,13 @@
     "uuid": "247ef584-80ff-4d52-9cb3-b1b471923982"
   },
   {
+    "score": 9860,
+    "stage": 10,
+    "gravity": 1000,
+    "time": 14072,
+    "uuid": "d4cf77ed-01cd-4c56-9193-1cf499ca7125"
+  },
+  {
     "score": 9806,
     "stage": 10,
     "gravity": 1000,
@@ -180,6 +187,13 @@
     "gravity": 2000,
     "time": 5585,
     "uuid": "087209ba-ad54-48ee-99ff-02cf57653ab7"
+  },
+  {
+    "score": 1332,
+    "stage": 2,
+    "gravity": 1000,
+    "time": 66808,
+    "uuid": "ac7c81e9-30bf-458f-a20b-9cf86d42ac7f"
   },
   {
     "score": 1000,

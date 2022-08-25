@@ -1,7 +1,10 @@
+float degX;
+float degY;
+
 // センサー操作
 void sensorRotate(){
   
-  if(CONTROLLER == SENSOR){
+  if(CONTROLLER == ARDUINO || CONTROLLER == MICROBIT){
     // シリアルポートからデータ取得
     serialEvent(port);
     
@@ -25,7 +28,7 @@ void serialEvent(Serial port){
       degX = sensors[0];
       degY = sensors[1];
       
-      if(CONTROLLER == SENSOR){
+      if(CONTROLLER == ARDUINO){
         println(degX + ":" + degY);
       }
     }

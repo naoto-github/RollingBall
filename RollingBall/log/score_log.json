@@ -77,6 +77,13 @@
     "uuid": "302ae79f-b0b0-4b03-9d8c-db90eb82b063"
   },
   {
+    "score": 13643,
+    "stage": 8,
+    "gravity": 2000,
+    "time": 235799,
+    "uuid": "6fd4d552-7e15-4b48-922b-0ee93a6aface"
+  },
+  {
     "score": 9978,
     "stage": 10,
     "gravity": 1000,
@@ -196,6 +203,13 @@
     "uuid": "344c4332-a26c-40c9-83b1-f32fe36f9e43"
   },
   {
+    "score": 8772,
+    "stage": 10,
+    "gravity": 1000,
+    "time": 122802,
+    "uuid": "9d905d2d-16d6-4ac5-901e-5c1ef4c3c3ad"
+  },
+  {
     "score": 7956,
     "stage": 9,
     "gravity": 1000,
@@ -243,6 +257,13 @@
     "gravity": 2000,
     "time": 5585,
     "uuid": "087209ba-ad54-48ee-99ff-02cf57653ab7"
+  },
+  {
+    "score": 1442,
+    "stage": 2,
+    "gravity": 1000,
+    "time": 55816,
+    "uuid": "028bad86-a572-463e-9427-8e9493c20e25"
   },
   {
     "score": 1332,

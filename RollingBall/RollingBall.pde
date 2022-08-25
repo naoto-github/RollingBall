@@ -1,4 +1,4 @@
-import controlP5.*;
+ import controlP5.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
@@ -14,9 +14,10 @@ import processing.serial.*;
 
 // 操作方法
 final int MOUSE = 0;
-final int SENSOR = 1;
-final int KEYBOARD = 2;
-int CONTROLLER = KEYBOARD;
+final int KEYBOARD = 1;
+final int ARDUINO = 2;
+final int MICROBIT = 3;
+int CONTROLLER = MICROBIT;
 
 // 物理演算
 FWorld world;
@@ -49,10 +50,8 @@ ControlP5 restart_bt;
 
 // シリアル通信
 Serial port;
-float degX;
-float degY;
 //String PORT = "COM5"; // for Windows
-String PORT = "/dev/cu.usbmodem11101"; // for Mac
+String PORT = "/dev/cu.usbmodem141402"; // for Mac
 
 // ステージ
 final int STAGE_OPENING = -1;
@@ -118,8 +117,13 @@ void setup(){
   score_list.load();
   
   // シリアルポート
-  if(CONTROLLER == SENSOR){
+  if(CONTROLLER == ARDUINO){
     port = new Serial(this, PORT, 9600);
+    port.bufferUntil('\n');  // 改行までをバッファ
+  }
+  else if(CONTROLLER == MICROBIT){
+    port = new Serial(this, PORT, 115200); 
+    port.clear(); 
     port.bufferUntil('\n'); // 改行までをバッファ
   }
   

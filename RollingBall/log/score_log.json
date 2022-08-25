@@ -28,6 +28,13 @@
     "uuid": "c8dc551a-bcdb-48d9-a479-27cfed737889"
   },
   {
+    "score": 26011,
+    "stage": 9,
+    "gravity": 3000,
+    "time": 98997,
+    "uuid": "a56f491d-a929-4e95-b236-d570d0d55e87"
+  },
+  {
     "score": 19958,
     "stage": 10,
     "gravity": 2000,
@@ -40,6 +47,13 @@
     "gravity": 2000,
     "time": 18475,
     "uuid": "e93a3dca-e198-4b8b-bf56-a4e4b497154f"
+  },
+  {
+    "score": 19684,
+    "stage": 10,
+    "gravity": 2000,
+    "time": 31622,
+    "uuid": "f24cd762-73e3-4bfa-95e0-7f8b3677a52d"
   },
   {
     "score": 19553,
@@ -70,11 +84,32 @@
     "uuid": "a4ce3cae-2aff-4f1a-ae51-c943a0c0fbd6"
   },
   {
+    "score": 9976,
+    "stage": 10,
+    "gravity": 1000,
+    "time": 2486,
+    "uuid": "bce9828a-d394-4809-8f16-0119007dce7f"
+  },
+  {
+    "score": 9967,
+    "stage": 10,
+    "gravity": 1000,
+    "time": 3330,
+    "uuid": "9d36e5bc-bdb7-4ad1-ad75-31fd82b76ee7"
+  },
+  {
     "score": 9962,
     "stage": 10,
     "gravity": 1000,
     "time": 3895,
     "uuid": "aae0c94a-4c25-44ef-a302-7523cdd645b6"
+  },
+  {
+    "score": 9959,
+    "stage": 10,
+    "gravity": 1000,
+    "time": 4127,
+    "uuid": "154a208e-40d0-442c-ba76-fa04933e1855"
   },
   {
     "score": 9945,
@@ -89,6 +124,13 @@
     "gravity": 1000,
     "time": 6102,
     "uuid": "1a7112cd-393e-4f94-9725-199c4969ca07"
+  },
+  {
+    "score": 9937,
+    "stage": 5,
+    "gravity": 2000,
+    "time": 6305,
+    "uuid": "83be7462-c02f-481c-b505-c76fc7a850e8"
   },
   {
     "score": 9936,
@@ -154,6 +196,13 @@
     "uuid": "344c4332-a26c-40c9-83b1-f32fe36f9e43"
   },
   {
+    "score": 7956,
+    "stage": 9,
+    "gravity": 1000,
+    "time": 104458,
+    "uuid": "3be61124-9d08-4277-8c3e-d16bc4bf14b8"
+  },
+  {
     "score": 7919,
     "stage": 9,
     "gravity": 1000,
@@ -180,6 +229,13 @@
     "gravity": 1000,
     "time": 4016,
     "uuid": "c486ae76-f3db-4d14-aa10-3a27547dc594"
+  },
+  {
+    "score": 6421,
+    "stage": 8,
+    "gravity": 1000,
+    "time": 157904,
+    "uuid": "e8b84fbf-b6c0-49cd-ae67-974cac749a8a"
   },
   {
     "score": 1945,

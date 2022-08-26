@@ -50,8 +50,8 @@ ControlP5 restart_bt;
 
 // シリアル通信
 Serial port;
-//String PORT = "COM5"; // for Windows
-String PORT = "/dev/cu.usbmodem141402"; // for Mac
+String PORT = "COM8"; // for Windows
+//String PORT = "/dev/cu.usbmodem141402"; // for Mac
 
 // ステージ
 final int STAGE_OPENING = -1;
